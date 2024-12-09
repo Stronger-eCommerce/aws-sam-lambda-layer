@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: SAM template for creating a Python OpenAI Lambda layer
+
+Parameters:
+  LayerName:
+    Type: String
+    Default: openai-dependencies-layer
+    Description: OpenAI Lambda layer
+  
+  PythonVersion:
+    Type: String
+    Default: python3.12
+    AllowedValues:
+      - python3.10
+      - python3.11
+      - python3.12
+      - python3.13
+    Description: Python runtime version for the layer
+
+Resources:
+  PythonDependenciesLayer:
+    Type: AWS::Serverless::LayerVersion
+    Properties:
+      LayerName: !Ref LayerName
+      Description: Python dependencies layer
+      ContentUri: layer/
+      CompatibleRuntimes:
+        - !Ref PythonVersion
+      RetentionPolicy: Retain
+
+Outputs:
+  LayerVersionArn:
+    Description: Lambda Layer Version ARN
+    Value: !Ref PythonDependenciesLayer
+    Export:
+      Name: !Sub "${LayerName}-LayerVersionArn"
